@@ -6,4 +6,4 @@ W, S for up and down.
 Player 2 keys: 
 Directional arrows up and down.
 
-![Pong-Game](pong.gif)
+![pong](https://user-images.githubusercontent.com/99550596/231881811-35fa38c9-95b3-44b4-923b-f64c3442370d.gif)
