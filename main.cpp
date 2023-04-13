@@ -4,45 +4,51 @@
 
 int main()
 {
-    // Create window
-    sf::VideoMode vm(1920, 1080);
-    sf::RenderWindow window(vm, "Pong Game By IF", sf::Style::Fullscreen);
+    const int width = 960;
+    const int height = 540;
+
+    sf::VideoMode vm(width, height);
+    sf::RenderWindow window(vm, "Pong Game By IF");
     window.setMouseCursorVisible(false);
 
     sf::Font font;
+    font.loadFromFile("Fonts/DS-DIGI.TTF");
 
-    font.loadFromFile("Fonts/DS-DIGI.ttf");
+    const int textSize = 50;
     sf::Text text;
     text.setFont(font);
-    text.setCharacterSize(50);
+    text.setCharacterSize(textSize);
     text.setFillColor(sf::Color::Red);
-    text.setPosition(200, 10);
+    text.setPosition(width/10, 10);
 
-    font.loadFromFile("Fonts/DS-DIGI.ttf");
     sf::Text text2;
     text2.setFont(font);
-    text2.setCharacterSize(50);
+    text2.setCharacterSize(textSize);
     text2.setFillColor(sf::Color::Blue);
-    text2.setPosition(1720, 10);
+    text2.setPosition(9*width/10 -textSize/2, 10);
 
     int player1Score = 0;
     int player2Score = 0;
     
     // Ball
-    sf::CircleShape ball(15.f);
-    ball.setOrigin(7.5f, 7.5f);
+    const int radius = 15;
+    sf::CircleShape ball(radius);
+    ball.setOrigin(ball.getRadius(), ball.getRadius());
     ball.setFillColor(sf::Color::White);
-    ball.setPosition(1920 / 2 - 7.5, 1080 / 2 - 7.5);
+    ball.setPosition(width/2, height/2);
+
+    const float paddleWidth = 20.f;
+    const float paddleHeight = 150.f;
 
     // Paddle 1
-    sf::RectangleShape paddle1(sf::Vector2f(20.f, 150.f));
+    sf::RectangleShape paddle1(sf::Vector2f(paddleWidth, paddleHeight));
     paddle1.setFillColor(sf::Color::Red);
-    paddle1.setPosition(20, 1080 / 2 - 75);
+    paddle1.setPosition(paddle1.getSize().x, height/2 - paddle1.getSize().y/2);
 
     // Paddle 2
-    sf::RectangleShape paddle2(sf::Vector2f(20.f, 150.f));
+    sf::RectangleShape paddle2(sf::Vector2f(paddleWidth, paddleHeight));
     paddle2.setFillColor(sf::Color::Blue);
-    paddle2.setPosition(1880, 1080 / 2 - 75);
+    paddle2.setPosition(width - 2*paddle2.getSize().x, height/2 - paddle2.getSize().y/2);
 
     // Set initial velocity of the ball
     float speed = 0.15f;
@@ -65,25 +71,25 @@ int main()
         ball.move(vx, vy);
 
         // Reverse vertical velocity if ball hits top or bottom of window
-        if (ball.getPosition().y < 0.f || ball.getPosition().y > 1050.f)
+        if (ball.getPosition().y -ball.getRadius() < 0 || ball.getPosition().y > height - ball.getRadius())
             vy = -vy;
 
         // Reverse horizontal velocity if ball hits left or right side of window 
         if (ball.getPosition().x > paddle2.getPosition().x)                 
         { 
-            ball.setPosition(1920 / 2 - 7.5, 1080 / 2 - 7.5);
+            ball.setPosition(width/2, height/2);
             vy = -vy;
             player1Score++;
         }
         else if (ball.getPosition().x < paddle1.getPosition().x)
         {
-            ball.setPosition(1920 / 2 - 7.5, 1080 / 2 - 7.5);
+            ball.setPosition(width/2, height/2);
             vy = -vy;
             player2Score++;
         }
 
         // Check for collision between ball and paddle1
-        if (ball.getPosition().x < paddle1.getPosition().x + paddle1.getSize().x &&
+        if (ball.getPosition().x-ball.getRadius() < paddle1.getPosition().x + paddle1.getSize().x &&
             ball.getPosition().y > paddle1.getPosition().y &&
             ball.getPosition().y < paddle1.getPosition().y + paddle1.getSize().y)
         {
@@ -111,15 +117,15 @@ int main()
         {
             if (paddle1.getPosition().y > 0) 
             {
-                paddle1.move(0, -0.1);
+                paddle1.move(0, -speed);
             }
         }
 		    
         else if (sf::Keyboard::isKeyPressed(sf::Keyboard::S))
         {
-            if (paddle1.getPosition().y < 930) 
+            if (paddle1.getPosition().y < height-paddle1.getSize().y) 
             {
-                paddle1.move(0, 0.1);
+                paddle1.move(0, speed);
             }
         }       
 
@@ -128,26 +134,26 @@ int main()
 	    {
             if (paddle2.getPosition().y > 0) 
             {
-                paddle2.move(0, -0.1);
+                paddle2.move(0, -speed);
             }
         }
 
         else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down))
         {
-            if (paddle2.getPosition().y < 930) 
+            if (paddle2.getPosition().y < height -paddle2.getSize().y) 
             {
-                paddle2.move(0, 0.1);
+                paddle2.move(0, speed);
             }
         }
 
         // Player 1 score display
 	    std::stringstream ss;
-	    ss << player1Score << std::endl;
+	    ss << player1Score;
 	    text.setString(ss.str());
 
         // Player 2 score display
         std::stringstream ss2;
-        ss2 << player2Score << std::endl;
+        ss2 << player2Score;
         text2.setString(ss2.str());
 
         window.clear();
